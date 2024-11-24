@@ -1,15 +1,25 @@
 import pytest
 
-from account.models import CustomUser
+from django.contrib.auth import get_user_model
 
 
 @pytest.fixture
-def sample_user() -> CustomUser:
-    return CustomUser.objects.create_user(
+def sample_user():
+    return get_user_model().objects.create_user(
         email='sample_user@example.com',
         password='sample_password123',
         first_name='Sample First Name',
         last_name='Sample Last Name'
+    )
+
+
+@pytest.fixture
+def superuser():
+    return get_user_model().objects.create_superuser(
+        email='superuser@example.com',
+        password='test_password123',
+        first_name='Superuser First Name',
+        last_name='Superuser Last Name'
     )
 
 
@@ -27,7 +37,6 @@ def user(**kwargs):
         if kwargs:
             payload.update(kwargs)
 
-        return CustomUser.objects.create_user(**payload)
+        return get_user_model().objects.create_user(**payload)
 
     return _user_factory
-

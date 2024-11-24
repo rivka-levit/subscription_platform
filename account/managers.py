@@ -29,6 +29,6 @@ class CustomUserManager(BaseUserManager):
 
         for field in add_fields:
             if extra_fields.get(field) is not True:
-                raise ValueError(_('The superuser must have %s=Trie' % field))
+                raise ValueError(_('The superuser must have %s=True' % field))
 
         return self.create_user(email, password, **extra_fields)
