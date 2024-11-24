@@ -5,7 +5,7 @@ Command: pytest --cov=. --cov-report term-missing:skip-covered
 
 import pytest
 
-from django.contrib.auth import get_user_model
+from account.models import CustomUser
 
 pytestmark = pytest.mark.django_db
 
@@ -20,7 +20,7 @@ def test_create_user_success():
         'last_name': 'Sample Last Name'
     }
 
-    user = get_user_model().objects.create_user(**payload)
+    user = CustomUser.objects.create_user(**payload)
 
     assert user.check_password(payload['password']) == True
     assert user.email == payload['email']
@@ -48,7 +48,7 @@ def test_create_superuser_success():
         'last_name': 'Sample Last Name'
     }
 
-    superuser = get_user_model().objects.create_superuser(**payload)
+    superuser = CustomUser.objects.create_superuser(**payload)
 
     assert superuser.is_superuser is True
     assert superuser.is_staff is True
