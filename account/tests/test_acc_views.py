@@ -31,3 +31,14 @@ def test_register_get_page_csrf(client):
 
     r = client.get(reverse('register'))
     assert 'csrf_token' in r.context
+
+@pytest.mark.django_db
+def test_register_get_page_form_fields(client):
+    """Test register page contains right form fields."""
+
+    r = client.get(reverse('register'))
+    page_body = str(r.content)
+
+    assert 'type="email"' in page_body
+    assert page_body.count('type="password"') == 2
+    assert 'Are you a writer?' in page_body
