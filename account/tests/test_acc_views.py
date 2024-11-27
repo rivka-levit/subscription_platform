@@ -61,3 +61,19 @@ def test_register_post_create_user_success(client):
 
     assert r.status_code == 200
     assert new_user.exists()
+
+
+def test_register_post_invalid_fields_not_create_user(client):
+    """Test post request with invalid data not create a new user."""
+
+    payload = {
+        'email': 'new_user@example.com',
+        'first_name': 'First Name',
+        'last_name': 'Last Name'
+    }
+    r = client.post(reverse('register'), data=payload)
+    new_user = CustomUser.objects.filter(email=payload['email'])
+
+    assert r.status_code == 200
+    assert 'Invalid Form' in str(r.content)
+    assert new_user.exists() is False
