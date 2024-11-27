@@ -1,6 +1,10 @@
 from django.views import View
 from django.views.generic import TemplateView
-from django.shortcuts import render
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from account.forms import CreateUserForm
@@ -21,9 +25,29 @@ class RegisterView(View):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponse('User created successfully')
+            return redirect('login')
         return HttpResponse(f'Invalid Form: {form.errors}')
 
 class LoginView(View):
     def get(self, request):  # noqa
-        return render(request, 'account/login.html')
+        form = AuthenticationForm()
+        context = {'login_form': form}
+        return render(request, 'account/login.html', context)
+
+    def post(self, request):  # noqa
+        form = AuthenticationForm(request, data=request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data.get('username')  # Username / Email
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None and user.is_writer == True:
+                login(request, user)
+                return HttpResponse('Welcome, writer!')
+
+            if user is not None and user.is_writer == False:
+                login(request, user)
+                return HttpResponse('Welcome, client!')
+
+        return HttpResponse(f'Invalid Form: {form.errors}')

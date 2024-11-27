@@ -14,6 +14,17 @@ def sample_user() -> CustomUser:
 
 
 @pytest.fixture
+def user_writer() -> CustomUser:
+    return CustomUser.objects.create_user(
+        email='writer@example.com',
+        password='writer_password123',
+        first_name='Writer First Name',
+        last_name='Writer Last Name',
+        is_writer=True
+    )
+
+
+@pytest.fixture
 def superuser() -> CustomUser:
     return CustomUser.objects.create_superuser(
         email='superuser@example.com',
