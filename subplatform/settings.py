@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
 
     'account',
+    'client',
+    'writer',
 ]
 
 AUTH_USER_MODEL = 'account.CustomUser'
