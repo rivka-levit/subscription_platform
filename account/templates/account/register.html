@@ -1,16 +1,29 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration</title>
+
+  <title>Register</title>
+
+  <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/lux/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
+
 <body>
-<h1>Registration</h1>
-<form action="{% url 'register' %}" method="post" autocomplete="off">
-  {% csrf_token %}
-  {{ register_form.as_p }}
-  <input type="submit" value="Submit">
-</form>
+
+<div class="container bg-white shadow-md mt-md-5 p-5 form-layout">
+  <h1>Registration</h1>
+
+  <form action="{% url 'register' %}" method="post" autocomplete="off" class="pt-2">
+    {% csrf_token %}
+    {{ register_form.as_p }}
+    <input type="submit" value="Submit" class="mt-2">
+  </form>
+</div>
+
 </body>
 </html>

@@ -1,3 +1,10 @@
 body {
     background-color: #f0f0f0;
 }
+
+.form-layout {
+    max-width: 500px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
