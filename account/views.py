@@ -42,11 +42,11 @@ class LoginView(View):
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=username, password=password)
 
-            if user is not None and user.is_writer == True:
-                login(request, user)
-                return HttpResponse('Welcome, writer!')
+            if user is not None:
+                if user.is_writer:  # noqa
+                    login(request, user)
+                    return HttpResponse('Welcome, writer!')
 
-            if user is not None and user.is_writer == False:
                 login(request, user)
                 return HttpResponse('Welcome, client!')
 
