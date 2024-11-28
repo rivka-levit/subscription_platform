@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
 
 from account.forms import CreateUserForm
@@ -46,8 +46,8 @@ class LoginView(View):
                 login(request, user)
 
                 if user.is_writer:  # noqa
-                    return HttpResponse('Welcome, writer!')
+                    return redirect(reverse('writer:dashboard'))
 
-                return HttpResponse('Welcome, client!')
+                return redirect(reverse('client:dashboard'))
 
         return HttpResponse(f'Invalid Form: {form.errors}')

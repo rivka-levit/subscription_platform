@@ -103,8 +103,8 @@ def test_login_post_ordinary_client(client, sample_user):
         data={'username': sample_user.email, 'password': 'sample_password123'}
     )
 
-    assert r1.status_code == 200
-    assert 'Welcome, client!' in str(r1.content)
+    assert r1.status_code == 302
+    assert r1['Location'] == reverse('client:dashboard')
 
     r2 = client.get(reverse(''))
 
@@ -119,8 +119,8 @@ def test_login_post_writer(client, user_writer):
         data={'username': user_writer.email, 'password': 'writer_password123'}
     )
 
-    assert r1.status_code == 200
-    assert 'Welcome, writer!' in str(r1.content)
+    assert r1.status_code == 302
+    assert r1['Location'] == reverse('writer:dashboard')
 
     r2 = client.get(reverse(''))
 
