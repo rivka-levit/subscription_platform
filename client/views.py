@@ -2,4 +2,4 @@ from django.views.generic import TemplateView
 
 
 class ClientDashboardView(TemplateView):
-    pass
+    template_name = 'client/client_dashboard.html'
