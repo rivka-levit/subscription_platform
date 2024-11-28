@@ -43,11 +43,11 @@ class LoginView(View):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
+                login(request, user)
+
                 if user.is_writer:  # noqa
-                    login(request, user)
                     return HttpResponse('Welcome, writer!')
 
-                login(request, user)
                 return HttpResponse('Welcome, client!')
 
         return HttpResponse(f'Invalid Form: {form.errors}')
