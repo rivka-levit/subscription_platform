@@ -1,8 +1,9 @@
 from django.views import View
 from django.views.generic import TemplateView
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
@@ -51,3 +52,9 @@ class LoginView(View):
                 return redirect(reverse('client:dashboard'))
 
         return HttpResponse(f'Invalid Form: {form.errors}')
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('')
