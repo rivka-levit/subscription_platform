@@ -14,12 +14,16 @@ from account.forms import CreateUserForm
 class HomeView(TemplateView):
     template_name = 'account/index.html'
 
+    def get_context_data(self, **kwargs):
+        context = {'title': 'Edenthought'}
+        return context
+
 
 class RegisterView(View):
 
     def get(self, request):  # noqa
         form = CreateUserForm()
-        context = {'register_form': form}
+        context = {'register_form': form, 'title': 'Edenthought | Register'}
         return render(request, 'account/register.html', context)
 
     def post(self, request): # noqa
@@ -32,7 +36,7 @@ class RegisterView(View):
 class LoginView(View):
     def get(self, request):  # noqa
         form = AuthenticationForm()
-        context = {'login_form': form}
+        context = {'login_form': form, 'title': 'Edenthought | Login'}
         return render(request, 'account/login.html', context)
 
     def post(self, request):  # noqa
