@@ -6,7 +6,7 @@ Command: pytest --cov=. --cov-report term-missing:skip-covered
 import pytest
 
 from django.urls import reverse
-from django.contrib.auth import login, get_user
+from django.contrib.auth import get_user
 
 from account.forms import CreateUserForm
 from account.models import CustomUser

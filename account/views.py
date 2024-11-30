@@ -54,7 +54,7 @@ class LoginView(View):
         return HttpResponse(f'Invalid Form: {form.errors}')
 
 
-@login_required
+@login_required(login_url='login')
 def logout_view(request):
     logout(request)
     return redirect('')
