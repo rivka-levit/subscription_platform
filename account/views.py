@@ -18,6 +18,19 @@ class HomeView(TemplateView):
         context = {'title': 'Edenthought'}
         return context
 
+    def get_template_names(self):
+        user = self.request.user
+
+        if user.is_authenticated:
+            if user.is_writer:
+                template_name = 'writer/writer_dashboard.html'
+            else:
+                template_name = 'client/client_dashboard.html'
+        else:
+            template_name = self.template_name
+
+        return [template_name]
+
 
 class RegisterView(View):
 
