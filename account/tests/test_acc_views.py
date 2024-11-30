@@ -4,7 +4,9 @@ Command: pytest --cov=. --cov-report term-missing:skip-covered
 """
 
 import pytest
+
 from django.urls import reverse
+from django.contrib.auth import login, get_user
 
 from account.forms import CreateUserForm
 from account.models import CustomUser
@@ -98,33 +100,27 @@ def test_login_get_render_correct_form(client):
 def test_login_post_ordinary_client(client, sample_user):
     """Test ordinary client logged in."""
 
-    r1 = client.post(
+    r = client.post(
         reverse('login'),
         data={'username': sample_user.email, 'password': 'sample_password123'}
     )
 
-    assert r1.status_code == 302
-    assert r1['Location'] == reverse('client:dashboard')
-
-    r2 = client.get(reverse(''))
-
-    assert r2.context['user'] == sample_user
+    assert r.status_code == 302
+    assert r['Location'] == reverse('client:dashboard')
+    assert get_user(client) == sample_user
 
 
 def test_login_post_writer(client, user_writer):
     """Test writer logged in."""
 
-    r1 = client.post(
+    r = client.post(
         reverse('login'),
         data={'username': user_writer.email, 'password': 'writer_password123'}
     )
 
-    assert r1.status_code == 302
-    assert r1['Location'] == reverse('writer:dashboard')
-
-    r2 = client.get(reverse(''))
-
-    assert r2.context['user'] == user_writer
+    assert r.status_code == 302
+    assert r['Location'] == reverse('writer:dashboard')
+    assert get_user(client) == user_writer
 
 
 def test_login_with_invalid_data_fails(client):
@@ -136,3 +132,21 @@ def test_login_with_invalid_data_fails(client):
     )
     assert r.status_code == 200
     assert 'Invalid Form' in str(r.content)
+
+
+def test_logout_success(client, sample_user):
+    """Test logout successfully."""
+
+    client.post(
+        reverse('login'),
+        data={
+            'username': sample_user.email,
+            'password': 'sample_password123'
+        }
+    )
+
+    r = client.get(reverse('logout'))
+
+    assert r.status_code == 302
+    assert r['Location'] == reverse('')
+    assert get_user(client).is_anonymous
