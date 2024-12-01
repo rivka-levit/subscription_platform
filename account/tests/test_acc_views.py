@@ -140,14 +140,7 @@ def test_login_with_invalid_data_fails(client):
 def test_logout_success(client, sample_user):
     """Test logout successfully."""
 
-    client.post(
-        reverse('login'),
-        data={
-            'username': sample_user.email,
-            'password': 'sample_password123'
-        }
-    )
-
+    client.force_login(sample_user)
     r = client.get(reverse('logout'))
 
     assert r.status_code == 302
