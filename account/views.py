@@ -18,18 +18,13 @@ class HomeView(TemplateView):
         context = {'title': 'Edenthought'}
         return context
 
-    def get_template_names(self):
+    def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-
         if user.is_authenticated:
             if user.is_writer:
-                template_name = 'writer/writer_dashboard.html'
-            else:
-                template_name = 'client/client_dashboard.html'
-        else:
-            template_name = self.template_name
-
-        return [template_name]
+                return redirect(reverse('writer:dashboard', kwargs={'writer_id': user.id}))
+            return redirect(reverse('client:dashboard'))
+        return super(HomeView, self).dispatch(request, *args, **kwargs)
 
 
 class RegisterView(View):
@@ -64,7 +59,8 @@ class LoginView(View):
                 login(request, user)
 
                 if user.is_writer:  # noqa
-                    return redirect(reverse('writer:dashboard'))
+                    return redirect(reverse('writer:dashboard',
+                                            kwargs={'writer_id': user.id}))
 
                 return redirect(reverse('client:dashboard'))
 

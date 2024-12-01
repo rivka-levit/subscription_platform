@@ -9,5 +9,5 @@ from writer.views import WriterDashboardView
 app_name = 'writer'
 
 urlpatterns = [
-    path('dashboard/', WriterDashboardView.as_view(), name='dashboard'),
+    path('<int:writer_id>/dashboard/', WriterDashboardView.as_view(), name='dashboard'),
 ]

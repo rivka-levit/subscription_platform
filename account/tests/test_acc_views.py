@@ -119,7 +119,10 @@ def test_login_post_writer(client, user_writer):
     )
 
     assert r.status_code == 302
-    assert r['Location'] == reverse('writer:dashboard')
+    assert r['Location'] == reverse(
+        'writer:dashboard',
+        kwargs={'writer_id': user_writer.id}
+    )
     assert get_user(client) == user_writer
 
 

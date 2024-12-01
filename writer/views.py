@@ -8,6 +8,10 @@ class WriterDashboardView(LoginRequiredMixin, TemplateView):
     login_url = 'login'
     redirect_field_name = 'redirect_to'
 
+    def dispatch(self, request, *args, **kwargs):
+        return self.get(request, self.kwargs['writer_id'], *args, **kwargs)
+
     def get_context_data(self, **kwargs):
-        context = {'title': 'Edenthought | Writer Dashboard'}
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edenthought | Writer Dashboard'
         return context
