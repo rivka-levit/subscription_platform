@@ -63,3 +63,17 @@ def test_create_article_with_repeating_slug_different_users_pass(user):
     query_set = Article.objects.filter(slug='repeating-slug')
 
     assert query_set.count() == 2
+
+def test_create_article_with_custom_slug_success(user_writer):
+    """Test creating an article with custom slug successfully."""
+
+    data = {
+        'title': 'Test title',
+        'content': 'Test content',
+        'slug': 'custom-title-slug',
+        'author': user_writer,
+    }
+
+    article = Article.objects.create(**data)
+    assert article.title == data['title']
+    assert article.slug == data['slug']
