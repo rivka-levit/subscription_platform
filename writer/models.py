@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 class Article(models.Model):
     title = models.CharField(max_length=150)
-    slug = models.SlugField(max_length=255)
+    slug = models.SlugField(max_length=255, blank=True)
     content = models.TextField(max_length=10000, blank=True)
     author = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
