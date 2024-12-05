@@ -8,6 +8,8 @@ import pytest
 from django.urls import reverse
 from django.utils.text import slugify
 
+from writer.models import Article
+
 pytestmark = pytest.mark.django_db
 
 
@@ -51,3 +53,24 @@ def test_create_article_form_fields_correct(client, user_writer):
     assert 'for="id_content"' in page_body
     assert 'type="checkbox"' in page_body
     assert 'type="submit"' in page_body
+
+
+def test_create_article_post_success(client, user_writer):
+    payload = {
+        'title': 'Sample Article Title',
+        'content': 'Sample Article Content',
+    }
+    client.force_login(user_writer)
+    r = client.post(
+        reverse('writer:create_article', kwargs={'writer_id': user_writer.id}),
+        data=payload
+    )
+    new_article = Article.objects.filter(title=payload['title'])
+
+    assert r.status_code == 302
+    assert r['Location'] == reverse(
+        'writer:dashboard',
+        kwargs={'writer_id': user_writer.id}
+    )
+    assert new_article.exists()
+    assert len(new_article) == 1
