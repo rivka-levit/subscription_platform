@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
 from django.shortcuts import render, reverse, redirect
 
@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from writer.forms import ArticleForm
+from writer.models import Article
 
 
 class WriterDashboardView(LoginRequiredMixin, TemplateView):
@@ -54,3 +55,26 @@ class CreateArticleView(LoginRequiredMixin, View):
             return redirect(reverse('writer:dashboard', kwargs={'writer_id': writer_id}))
 
         return HttpResponse('Invalid form!')
+
+
+class MyArticlesView(LoginRequiredMixin, ListView):
+    login_url = 'login'
+    redirect_field_name = 'redirect_to'
+    model = Article
+    template_name = 'writer/my_articles.html'
+    context_object_name = 'articles'
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(MyArticlesView, self).dispatch(
+            request,
+            self.kwargs['writer_id'],
+            *args, **kwargs
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edenthought | My Articles'
+        return context
+
+    def get_queryset(self):
+        return super().get_queryset().filter(author=self.request.user)

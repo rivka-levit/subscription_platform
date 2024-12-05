@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block menu %}
+  {% include 'writer/includes/writer_menu.html' %}
+{% endblock %}
+
+{% block content %}
+
+  <div class="container shadow bg-white my-4 my-md-5 pt-4 pb-3">
+
+    <h3 class="text-center">My Articles</h3>
+
+  </div>
+
+
+  {% for article in articles %}
+    <div class="container shadow bg-white my-3 my-md-4 p-4">
+      <h3> {{ article.title }} </h3>
+      {{ article.content }}
+      <br><br>
+      {{ article.date_posted|date:"M j, Y" }} - {{ article.date_posted|time:"H:i:s" }}
+    </div>
+  {% endfor %}
+
+
+{% endblock %}
