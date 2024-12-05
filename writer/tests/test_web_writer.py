@@ -74,3 +74,21 @@ def test_create_article_post_success(client, user_writer):
     )
     assert new_article.exists()
     assert len(new_article) == 1
+    assert new_article[0].slug == slugify(payload['title'])
+
+
+def test_create_article_post_invalid_form_fails(client, user_writer):
+    payload = {
+        'slug': 'some-article-slug',
+        'content': 'Sample article content',
+    }
+    client.force_login(user_writer)
+    r = client.post(
+        reverse('writer:create_article', kwargs={'writer_id': user_writer.id}),
+        data=payload
+    )
+    new_article = Article.objects.filter(slug=payload['slug'])
+
+    assert r.status_code == 200
+    assert 'Invalid form!' in str(r.content)
+    assert new_article.exists() is False
