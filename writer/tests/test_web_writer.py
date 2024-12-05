@@ -10,11 +10,15 @@ from django.urls import reverse
 pytestmark = pytest.mark.django_db
 
 
-def test_writer_dashboard_get_success(client, user_writer):
-    """Test get writer dashboard page successfully."""
+@pytest.mark.parametrize(
+    'path_name,expected',
+    [('writer:dashboard', 200), ('writer:create_article', 200)]
+)
+def test_writer_get_page_success(client, user_writer, path_name, expected):
+    """Test get writer pages get successfully."""
 
     client.force_login(user_writer)
 
-    r = client.get(reverse('writer:dashboard', kwargs={'writer_id': user_writer.id}))
+    r = client.get(reverse(path_name, kwargs={'writer_id': user_writer.id}))
 
-    assert r.status_code == 200
+    assert r.status_code == expected
