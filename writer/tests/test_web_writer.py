@@ -6,6 +6,7 @@ Command: pytest writer\tests\test_web_writer.py --cov=writer --cov-report term-m
 import pytest
 
 from django.urls import reverse
+from django.utils.text import slugify
 
 pytestmark = pytest.mark.django_db
 
@@ -34,3 +35,19 @@ def test_create_article_has_protected_form(client, user_writer):
     assert r.status_code == 200
     assert 'article_form' in r.context
     assert 'csrf_token' in r.context
+
+
+def test_create_article_form_fields_correct(client, user_writer):
+    client.force_login(user_writer)
+    r = client.get(reverse(
+        'writer:create_article',
+        kwargs={'writer_id': user_writer.id}
+    ))
+    page_body = str(r.content)
+
+    assert r.status_code == 200
+    assert 'for="id_title"' in page_body
+    assert 'for="id_slug"' in page_body
+    assert 'for="id_content"' in page_body
+    assert 'type="checkbox"' in page_body
+    assert 'type="submit"' in page_body
