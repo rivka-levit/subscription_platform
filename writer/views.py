@@ -34,7 +34,10 @@ class CreateArticleView(LoginRequiredMixin, View):
 
     def get(self, request, writer_id):  # noqa
         form = ArticleForm()
-        context = {'article_form': form}
+        context = {
+            'article_form': form,
+            'title': 'Edenthought | Create Article'
+        }
 
         return render(request, 'writer/create_article.html', context=context)
 

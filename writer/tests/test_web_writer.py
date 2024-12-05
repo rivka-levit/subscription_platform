@@ -22,3 +22,15 @@ def test_writer_get_page_success(client, user_writer, path_name, expected):
     r = client.get(reverse(path_name, kwargs={'writer_id': user_writer.id}))
 
     assert r.status_code == expected
+
+
+def test_create_article_has_protected_form(client, user_writer):
+    client.force_login(user_writer)
+
+    r = client.get(reverse(
+        'writer:create_article',
+        kwargs={'writer_id': user_writer.id}
+    ))
+    assert r.status_code == 200
+    assert 'article_form' in r.context
+    assert 'csrf_token' in r.context
