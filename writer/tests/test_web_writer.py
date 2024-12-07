@@ -73,7 +73,7 @@ def test_create_article_post_success(client, user_writer):
 
     assert r.status_code == 302
     assert r['Location'] == reverse(
-        'writer:dashboard',
+        'writer:my_articles',
         kwargs={'writer_id': user_writer.id}
     )
     assert new_article.exists()

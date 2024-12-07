@@ -2,6 +2,10 @@ body {
     background-color: #f0f0f0;
 }
 
+a {
+    text-decoration: none;
+}
+
 .form-layout {
     max-width: 500px;
     -webkit-border-radius: 20px;

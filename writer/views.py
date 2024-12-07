@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.views.generic import TemplateView, ListView
 
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -44,7 +44,7 @@ class CreateArticleView(LoginRequiredMixin, View):
 
 
     def post(self, request, writer_id):  # noqa
-        user = get_user_model().objects.get(id=writer_id)
+        user = get_user_model().objects.get(id=self.request.user.id)
         form = ArticleForm(request.POST)
 
         if form.is_valid():
@@ -52,7 +52,7 @@ class CreateArticleView(LoginRequiredMixin, View):
             article.author = user
             article.save()
 
-            return redirect(reverse('writer:dashboard', kwargs={'writer_id': writer_id}))
+            return redirect(reverse('writer:my_articles', kwargs={'writer_id': writer_id}))
 
         return HttpResponse('Invalid form!')
 
@@ -79,3 +79,33 @@ class MyArticlesView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return (super().get_queryset().filter(author=self.request.user)
                 .order_by('-date_posted'))
+
+
+class UpdateArticleView(LoginRequiredMixin, View):
+    login_url = 'login'
+    redirect_field_name = 'redirect_to'
+
+    def get(self, request, writer_id, article_id):  # noqa
+        user = get_object_or_404(get_user_model(), id=self.request.user.id)
+        article = get_object_or_404(Article, id=article_id, author=user)
+        form = ArticleForm(instance=article)
+        context = {
+            'article_form': form,
+            'title': 'Edenthought | Update Article',
+            'article': article
+        }
+
+        return render(request, 'writer/update_article.html', context=context)
+
+    def post(self, request, writer_id, article_id):  # noqa
+        user = get_object_or_404(get_user_model(), id=self.request.user.id)
+        article = get_object_or_404(Article, id=article_id, author=user)
+        form = ArticleForm(request.POST, instance=article)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect(reverse('writer:my_articles',
+                                    kwargs={'writer_id': writer_id}))
+
+        return HttpResponse('Invalid form!')
