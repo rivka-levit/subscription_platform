@@ -15,7 +15,11 @@ pytestmark = pytest.mark.django_db
 
 @pytest.mark.parametrize(
     'path_name,expected',
-    [('writer:dashboard', 200), ('writer:create_article', 200)]
+    [
+        ('writer:dashboard', 200),
+        ('writer:create_article', 200),
+        ('writer:my_articles', 200)
+    ]
 )
 def test_writer_get_page_success(client, user_writer, path_name, expected):
     """Test get writer pages get successfully."""
@@ -92,3 +96,56 @@ def test_create_article_post_invalid_form_fails(client, user_writer):
     assert r.status_code == 200
     assert 'Invalid form!' in str(r.content)
     assert new_article.exists() is False
+
+
+def test_my_articles_get_list_success(client, user_writer, article):
+    a1 = article(user_writer, title='Article 1')
+    a2 = article(user_writer, title='Article 2')
+
+    client.force_login(user_writer)
+    r = client.get(reverse(
+        'writer:my_articles',
+        kwargs={'writer_id': user_writer.id}
+    ))
+    page_body = str(r.content)
+
+    assert r.status_code == 200
+    assert 'articles' in r.context
+    assert len(r.context['articles']) == 2
+    assert a1.title in page_body
+    assert a2.title in page_body
+
+
+def test_my_articles_get_only_logged_user_articles(client, user, article):
+    user1 = user(
+        email='user1@example.com',
+        password='test_pass123',
+        is_writer=True
+    )
+    user2 = user(
+        email='user2@example.com',
+        password='test_pass123',
+        is_writer=True
+    )
+
+    article(user1)
+    article(user2, title='Article 1 of user2')
+    article(user2, title='Article 2 of user2')
+
+    client.force_login(user1)
+    r = client.get(reverse(
+        'writer:my_articles',
+        kwargs={'writer_id': user1.id}
+    ))
+    assert 'articles' in r.context
+    assert len(r.context['articles']) == 1
+
+    client.logout()
+
+    client.force_login(user2)
+    r = client.get(reverse(
+        'writer:my_articles',
+        kwargs={'writer_id': user2.id}
+    ))
+    assert 'articles' in r.context
+    assert len(r.context['articles']) == 2

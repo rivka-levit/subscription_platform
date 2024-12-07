@@ -77,4 +77,5 @@ class MyArticlesView(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        return super().get_queryset().filter(author=self.request.user)
+        return (super().get_queryset().filter(author=self.request.user)
+                .order_by('-date_posted'))

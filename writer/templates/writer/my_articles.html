@@ -14,15 +14,18 @@
 
   </div>
 
+  {% if articles %}
+    {% for article in articles %}
 
-  {% for article in articles %}
-    <div class="container shadow bg-white my-3 my-md-4 p-4">
-      <h3> {{ article.title }} </h3>
-      {{ article.content }}
-      <br><br>
-      {{ article.date_posted|date:"M j, Y" }} - {{ article.date_posted|time:"H:i:s" }}
-    </div>
-  {% endfor %}
+      <div class="container shadow bg-white my-3 my-md-4 p-4">
+        <h3> {{ article.title }} </h3>
+        {{ article.content }}
+        <br><br>
+        {{ article.date_posted|date:"M j, Y" }} - {{ article.date_posted|time:"H:i:s" }}
+      </div>
+
+    {% endfor %}
+  {% endif %}
 
 
 {% endblock %}
