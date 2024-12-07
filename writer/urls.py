@@ -28,7 +28,7 @@ urlpatterns = [
         name='my_articles'
     ),
     path(
-        '<int:writer_id>/update-article/<int:article_id>',
+        '<int:writer_id>/update-article/<slug:slug>',
         UpdateArticleView.as_view(),
         name='update_article'
     ),

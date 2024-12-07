@@ -12,7 +12,7 @@
 
     <h3 class="text-center">Update Article</h3>
 
-    <form action="{% url 'writer:update_article' user.id article.id %}"
+    <form action="{% url 'writer:update_article' user.id article.slug %}"
           method="post"
           autocomplete="off"
           class="pt-2 mt-2 mt-md-4">

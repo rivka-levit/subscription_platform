@@ -85,9 +85,9 @@ class UpdateArticleView(LoginRequiredMixin, View):
     login_url = 'login'
     redirect_field_name = 'redirect_to'
 
-    def get(self, request, writer_id, article_id):  # noqa
+    def get(self, request, writer_id, slug):  # noqa
         user = get_object_or_404(get_user_model(), id=self.request.user.id)
-        article = get_object_or_404(Article, id=article_id, author=user)
+        article = get_object_or_404(Article, slug=slug, author=user)
         form = ArticleForm(instance=article)
         context = {
             'article_form': form,
@@ -97,15 +97,15 @@ class UpdateArticleView(LoginRequiredMixin, View):
 
         return render(request, 'writer/update_article.html', context=context)
 
-    def post(self, request, writer_id, article_id):  # noqa
+    def post(self, request, writer_id, slug):  # noqa
         user = get_object_or_404(get_user_model(), id=self.request.user.id)
-        article = get_object_or_404(Article, id=article_id, author=user)
+        article = get_object_or_404(Article, slug=slug, author=user)
         form = ArticleForm(request.POST, instance=article)
 
         if form.is_valid():
             form.save()
 
             return redirect(reverse('writer:my_articles',
-                                    kwargs={'writer_id': writer_id}))
+                                    kwargs={'writer_id': self.request.user.id}))
 
         return HttpResponse('Invalid form!')
