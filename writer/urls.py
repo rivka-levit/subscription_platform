@@ -7,7 +7,8 @@ from django.urls import path
 from writer.views import (WriterDashboardView,
                           CreateArticleView,
                           MyArticlesView,
-                          UpdateArticleView)
+                          UpdateArticleView,
+                          delete_article)
 
 app_name = 'writer'
 
@@ -28,8 +29,13 @@ urlpatterns = [
         name='my_articles'
     ),
     path(
-        '<int:writer_id>/update-article/<slug:slug>',
+        '<int:writer_id>/update-article/<slug:slug>/',
         UpdateArticleView.as_view(),
         name='update_article'
+    ),
+    path(
+        '<int:writer_id>/delete-article/<slug:slug>/',
+        delete_article,
+        name='delete_article'
     ),
 ]

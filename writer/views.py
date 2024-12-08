@@ -6,6 +6,7 @@ from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from writer.forms import ArticleForm
 from writer.models import Article
@@ -109,3 +110,16 @@ class UpdateArticleView(LoginRequiredMixin, View):
                                     kwargs={'writer_id': self.request.user.id}))
 
         return HttpResponse('Invalid form!')
+
+
+@login_required(redirect_field_name='redirect_to', login_url='login')
+def delete_article(request, writer_id, slug):
+    user = get_object_or_404(get_user_model(), id=request.user.id)
+    article = get_object_or_404(Article, slug=slug, author=user)
+
+    if article:
+        article.delete()
+
+    return redirect(reverse('writer:my_articles',
+                            kwargs={'writer_id': request.user.id}))
+
