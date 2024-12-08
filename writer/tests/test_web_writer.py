@@ -149,3 +149,55 @@ def test_my_articles_get_only_logged_user_articles(client, user, article):
     ))
     assert 'articles' in r.context
     assert len(r.context['articles']) == 2
+
+
+def test_update_article_has_form_with_content(client, user_writer, article):
+    a = article(user_writer)
+    client.force_login(user_writer)
+    r = client.get(reverse(
+        'writer:update_article',
+        kwargs={'writer_id': user_writer.id, 'slug': a.slug}
+    ))
+    page_body = str(r.content)
+
+    assert r.status_code == 200
+    assert 'article_form' in r.context
+    assert 'csrf_token' in r.context
+    assert f'value="{a.title}"' in page_body
+    assert f'value="{a.slug}"' in page_body
+    assert a.content in page_body
+
+
+def test_update_article_success(client, user_writer, article):
+    a = article(user_writer)
+    client.force_login(user_writer)
+    payload = {'title': 'Changed Title', 'slug': slugify('Changed Title')}
+
+    r = client.post(
+        reverse('writer:update_article',
+                kwargs={'writer_id': user_writer.id, 'slug': a.slug}),
+        data=payload
+    )
+    a.refresh_from_db()
+
+    assert r.status_code == 302
+    assert r['Location'] == reverse('writer:my_articles',
+                                    kwargs={'writer_id': user_writer.id})
+    assert a.title == payload['title']
+    assert a.slug == payload['slug']
+
+
+def test_update_article_post_invalid_form_fails(client, user_writer, article):
+    a = article(user_writer)
+    client.force_login(user_writer)
+    payload = {'title': ''}
+    r = client.post(
+        reverse('writer:update_article',
+                kwargs={'writer_id': user_writer.id, 'slug': a.slug}),
+        data=payload
+    )
+    a_not_updated = Article.objects.get(id=a.id)
+
+    assert r.status_code == 200
+    assert 'Invalid form!' in str(r.content)
+    assert a.title == a_not_updated.title

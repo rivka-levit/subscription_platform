@@ -28,8 +28,8 @@ def test_create_article_pass(user_writer):
     assert article.title == data['title']
     assert article.content == data['content']
     assert article.author == user_writer
-    assert str(article) == data['title']
     assert article.slug == slugify(data['title'])
+    assert str(article) == article.title
 
 
 def test_create_article_with_repeating_slug_same_user_fails(user_writer):
