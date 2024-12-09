@@ -5,6 +5,8 @@ Command: pytest writer\tests\test_web_writer.py --cov=writer --cov-report term-m
 
 import pytest
 
+from django.contrib.messages import get_messages
+
 from django.urls import reverse
 from django.utils.text import slugify
 
@@ -92,9 +94,11 @@ def test_create_article_post_invalid_form_fails(client, user_writer):
         data=payload
     )
     new_article = Article.objects.filter(slug=payload['slug'])
+    response_messages = list(get_messages(r.wsgi_request))
 
-    assert r.status_code == 200
-    assert 'Invalid form!' in str(r.content)
+    assert r.status_code == 302
+    assert len(response_messages) == 1
+    assert response_messages[0].message == 'Something went wrong!'
     assert new_article.exists() is False
 
 
@@ -197,7 +201,11 @@ def test_update_article_post_invalid_form_fails(client, user_writer, article):
         data=payload
     )
     a_not_updated = Article.objects.get(id=a.id)
+    response_messages = list(get_messages(r.wsgi_request))
 
-    assert r.status_code == 200
-    assert 'Invalid form!' in str(r.content)
+    assert r.status_code == 302
+    assert len(response_messages) == 1
+    assert response_messages[0].level == 40
+    assert response_messages[0].message == ('Article update failed! '
+                                            'Invalid data has been submitted.')
     assert a.title == a_not_updated.title

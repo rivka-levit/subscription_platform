@@ -4,6 +4,9 @@ Django settings for subplatform project.
 
 import os
 
+from django.contrib.messages import constants as message_constants
+from django.contrib.messages.context_processors import messages
+
 from dotenv import load_dotenv
 
 from pathlib import Path
@@ -134,3 +137,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MESSAGE_TAGS = {
+    message_constants.DEBUG: '',
+    message_constants.ERROR: 'danger',
+}

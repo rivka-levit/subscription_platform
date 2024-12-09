@@ -1,9 +1,9 @@
-from django.http import HttpResponse
 from django.views import View
 from django.views.generic import TemplateView, ListView
 
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -52,10 +52,14 @@ class CreateArticleView(LoginRequiredMixin, View):
             article = form.save(commit=False)
             article.author = user
             article.save()
-
+            messages.success(request, 'Article created successfully!')
             return redirect(reverse('writer:my_articles', kwargs={'writer_id': writer_id}))
 
-        return HttpResponse('Invalid form!')
+        messages.error(request, 'Something went wrong!')
+        return redirect(request.META.get(
+            'HTTP_REFERER',
+            reverse('writer:my_articles',
+            kwargs={'writer_id': self.request.user.id})))
 
 
 class MyArticlesView(LoginRequiredMixin, ListView):
@@ -95,7 +99,6 @@ class UpdateArticleView(LoginRequiredMixin, View):
             'title': 'Edenthought | Update Article',
             'article': article
         }
-
         return render(request, 'writer/update_article.html', context=context)
 
     def post(self, request, writer_id, slug):  # noqa
@@ -105,11 +108,15 @@ class UpdateArticleView(LoginRequiredMixin, View):
 
         if form.is_valid():
             form.save()
-
+            messages.success(request, 'Article updated successfully!')
             return redirect(reverse('writer:my_articles',
                                     kwargs={'writer_id': self.request.user.id}))
 
-        return HttpResponse('Invalid form!')
+        messages.error(request, 'Article update failed! Invalid data has been submitted.')
+        return redirect(request.META.get(
+            'HTTP_REFERER',
+            reverse('writer:my_articles',
+            kwargs={'writer_id': self.request.user.id})))
 
 
 @login_required(redirect_field_name='redirect_to', login_url='login')
@@ -119,6 +126,9 @@ def delete_article(request, writer_id, slug):
 
     if article:
         article.delete()
+        messages.success(request, 'Article deleted successfully!')
+    else:
+        messages.info(request, 'Article not found.')
 
     return redirect(reverse('writer:my_articles',
                             kwargs={'writer_id': request.user.id}))
