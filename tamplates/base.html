@@ -22,6 +22,7 @@
 
         </head>
 
+        <body>
         
         <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-sm-between">
           <div class="container">
@@ -56,9 +57,8 @@
           </div>
         </nav>
         
-
-        <body>
-
+        {% include 'includes/messages.html' %}
+        
         {% block content %}
         {% endblock content %}
 
