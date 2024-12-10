@@ -1,6 +1,7 @@
 from django.views import View
 from django.views.generic import TemplateView
 
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -38,8 +39,11 @@ class RegisterView(View):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Account has been created successfully!')
             return redirect('login')
-        return HttpResponse(f'Invalid Form: {form.errors}')
+
+        messages.error(request, f'Invalid data has been provided: {form.errors}')
+        return redirect(request.META.get('HTTP_REFERER', reverse('register')))
 
 class LoginView(View):
     def get(self, request):  # noqa
@@ -64,10 +68,12 @@ class LoginView(View):
 
                 return redirect(reverse('client:dashboard'))
 
-        return HttpResponse(f'Invalid Form: {form.errors}')
+        messages.error(request, 'Invalid username or password!')
+        return redirect(request.META.get('HTTP_REFERER', reverse('login')))
 
 
 @login_required(login_url='login')
 def logout_view(request):
     logout(request)
+    messages.success(request, 'You have been logged out!')
     return redirect('')

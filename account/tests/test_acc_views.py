@@ -1,12 +1,13 @@
 """
 Tests for views and html pages.
-Command: pytest --cov=. --cov-report term-missing:skip-covered
+Command: pytest account\tests\test_acc_views.py --cov=. --cov-report term-missing:skip-covered
 """
 
 import pytest
 
 from django.urls import reverse
 from django.contrib.auth import get_user
+from django.contrib.messages import get_messages
 
 from account.forms import CreateUserForm
 from account.models import CustomUser
@@ -65,9 +66,12 @@ def test_register_post_create_user_success(client):
     }
     r = client.post(reverse('register'), data=payload)
     new_user = CustomUser.objects.filter(email=payload['email'])
+    messages_received = list(get_messages(r.wsgi_request))
 
     assert r.status_code == 302
     assert new_user.exists()
+    assert len(messages_received) == 1
+    assert messages_received[0].level == 25
 
 
 def test_register_post_invalid_fields_not_create_user(client):
@@ -80,9 +84,13 @@ def test_register_post_invalid_fields_not_create_user(client):
     }
     r = client.post(reverse('register'), data=payload)
     new_user = CustomUser.objects.filter(email=payload['email'])
+    messages_received = list(get_messages(r.wsgi_request))
 
-    assert r.status_code == 200
-    assert 'Invalid Form' in str(r.content)
+    assert r.status_code == 302
+    assert r['Location'] == reverse('register')
+    assert len(messages_received) == 1
+    assert messages_received[0].level == 40
+    assert 'Invalid data has been provided:' in messages_received[0].message
     assert new_user.exists() is False
 
 
@@ -133,8 +141,13 @@ def test_login_with_invalid_data_fails(client):
         reverse('login'),
         data={'username': 'some@example.com', 'password': 'some_pass_123'}
     )
-    assert r.status_code == 200
-    assert 'Invalid Form' in str(r.content)
+    messages_received = list(get_messages(r.wsgi_request))
+
+    assert r.status_code == 302
+    assert r['Location'] == reverse('login')
+    assert len(messages_received) == 1
+    assert messages_received[0].level == 40
+    assert messages_received[0].message == 'Invalid username or password!'
 
 
 def test_logout_success(client, sample_user):
@@ -142,7 +155,11 @@ def test_logout_success(client, sample_user):
 
     client.force_login(sample_user)
     r = client.get(reverse('logout'))
+    messages_received = list(get_messages(r.wsgi_request))
 
     assert r.status_code == 302
     assert r['Location'] == reverse('')
     assert get_user(client).is_anonymous
+    assert len(messages_received) == 1
+    assert messages_received[0].level == 25
+    assert messages_received[0].message == 'You have been logged out!'

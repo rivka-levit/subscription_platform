@@ -116,7 +116,8 @@ class UpdateArticleView(LoginRequiredMixin, View):
         return redirect(request.META.get(
             'HTTP_REFERER',
             reverse('writer:my_articles',
-            kwargs={'writer_id': self.request.user.id})))
+            kwargs={'writer_id': self.request.user.id}))
+        )
 
 
 @login_required(redirect_field_name='redirect_to', login_url='login')
