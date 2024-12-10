@@ -209,3 +209,41 @@ def test_update_article_post_invalid_form_fails(client, user_writer, article):
     assert response_messages[0].message == ('Article update failed! '
                                             'Invalid data has been submitted.')
     assert a.title == a_not_updated.title
+
+
+def test_delete_article_success(client, user_writer, article):
+    a = article(user_writer)
+    client.force_login(user_writer)
+    r = client.get(reverse(
+        'writer:delete_article',
+        kwargs={'writer_id': user_writer.id, 'slug': a.slug}
+    ))
+    messages_received = list(get_messages(r.wsgi_request))
+
+    assert r.status_code == 302
+    assert r['Location'] == reverse('writer:my_articles',
+                                    kwargs={'writer_id': user_writer.id})
+    query = Article.objects.filter(slug=a.slug)
+
+    assert query.exists() is False
+    assert len(messages_received) == 1
+    assert messages_received[0].level == 25
+    assert messages_received[0].message == 'Article deleted successfully!'
+
+def test_delete_article_that_does_not_exist(client, user_writer):
+    """Test deletion of an article that does not exist returns appropriate
+    message to `My Articles` page."""
+
+    client.force_login(user_writer)
+    r = client.get(reverse(
+        'writer:delete_article',
+        kwargs={'writer_id': user_writer.id, 'slug': 'some-slug'}
+    ))
+    messages_received = list(get_messages(r.wsgi_request))
+
+    assert r.status_code == 302
+    assert r['Location'] == reverse('writer:my_articles',
+                                    kwargs={'writer_id': user_writer.id})
+    assert len(messages_received) == 1
+    assert messages_received[0].level == 20
+    assert messages_received[0].message == 'Article not found.'

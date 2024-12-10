@@ -123,12 +123,11 @@ class UpdateArticleView(LoginRequiredMixin, View):
 @login_required(redirect_field_name='redirect_to', login_url='login')
 def delete_article(request, writer_id, slug):
     user = get_object_or_404(get_user_model(), id=request.user.id)
-    article = get_object_or_404(Article, slug=slug, author=user)
-
-    if article:
+    try:
+        article = Article.objects.get(slug=slug, author=user)
         article.delete()
         messages.success(request, 'Article deleted successfully!')
-    else:
+    except Article.DoesNotExist:
         messages.info(request, 'Article not found.')
 
     return redirect(reverse('writer:my_articles',
