@@ -5,11 +5,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponse
 
-from account.forms import CreateUserForm
+from account.forms import CreateUserForm, UpdateUserForm
 
 
 class HomeView(TemplateView):
@@ -77,3 +77,24 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out!')
     return redirect('')
+
+
+class AccountView(LoginRequiredMixin, View):
+    login_url = 'login'
+    redirect_field_name = 'redirect_to'
+
+    def get(self, request):  # noqa
+        form = UpdateUserForm(instance=request.user)
+        context = {'account_form': form, 'title': 'Edenthought | Account'}
+        return render(request, 'account/account.html', context)
+
+    def post(self, request):  # noqa
+        form = UpdateUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Account has been updated successfully!')
+        else:
+            messages.error(request,
+                           f'Invalid data has been provided: {form.errors}')
+
+        return redirect('')
