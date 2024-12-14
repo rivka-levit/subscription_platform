@@ -2,12 +2,12 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 
 from account.forms import CreateUserForm, UpdateUserForm
 
@@ -98,3 +98,14 @@ class AccountView(LoginRequiredMixin, View):
                            f'Invalid data has been provided: {form.errors}')
 
         return redirect('')
+
+
+@login_required(login_url='login')
+def delete_account(request):
+    user = get_object_or_404(get_user_model(), id=request.user.id)
+
+    logout(request)
+    user.delete()
+    messages.success(request, 'Account has been deleted successfully!')
+
+    return redirect(reverse(''))
