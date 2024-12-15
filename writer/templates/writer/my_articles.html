@@ -17,7 +17,7 @@
   {% if articles %}
     {% for article in articles %}
 
-      <div class="container shadow bg-white my-3 my-md-4 p-4">
+      <div class="container shadow bg-white my-3 my-md-4 p-4 form-layout">
         <h3> {{ article.title }} </h3>
 
         {% if article.is_premium %}
@@ -32,17 +32,18 @@
           {{ article.date_posted|date:"M j, Y" }} - {{ article.date_posted|time:"H:i:s" }}
         </div>
 
-        <br>
         <div class="update">
-          <a href="{% url 'writer:update_article' user.id article.slug %}">
-            ⚙️ Update article
-          </a>
-        </div>
+          <div>
+            <a href="{% url 'writer:update_article' user.id article.slug %}">
+              ⚙️ Update article
+            </a>
+          </div>
 
-        <div class="update">
-          <a type="button" data-toggle="modal" data-target="#deleteModalCenter">
-            ❌️ Delete article
-          </a>
+          <div class="delete-article">
+            <a type="button" data-toggle="modal" data-target="#deleteModalCenter">
+              ❌️ Delete article
+            </a>
+          </div>
         </div>
 
         {% include 'writer/includes/delete_modal.html' %}
