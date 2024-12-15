@@ -2,9 +2,13 @@
 {% load static %}
 
 {% block menu %}
-  {% include 'account/includes/main_menu.html' %}
+  {% include 'client/includes/client_menu.html' %}
 {% endblock %}
 
 {% block content %}
-  <h1>Dashboard</h1>
+
+  <div class="container bg-white shadow mt-2 mt-md-4 p-5 form-layout text-center">
+    <h5>📖 Welcome, {{ user.first_name }}!</h5>
+  </div>
+
 {% endblock %}

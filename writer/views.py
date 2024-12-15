@@ -18,11 +18,19 @@ class WriterDashboardView(LoginRequiredMixin, TemplateView):
     redirect_field_name = 'redirect_to'
 
     def dispatch(self, request, *args, **kwargs):
-        return super(WriterDashboardView, self).dispatch(
-            request,
-            self.kwargs['writer_id'],
-            *args, **kwargs
-        )
+        if request.user.is_writer and request.user.id == self.kwargs['writer_id']:
+            return super(WriterDashboardView, self).dispatch(
+                request,
+                self.kwargs['writer_id'],
+                *args, **kwargs
+            )
+        if request.user.is_writer:
+            return super(WriterDashboardView, self).dispatch(
+                request,
+                request.user.id,
+                *args, **kwargs
+            )
+        return redirect('client:dashboard')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

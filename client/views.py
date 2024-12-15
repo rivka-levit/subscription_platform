@@ -1,3 +1,5 @@
+from django.shortcuts import redirect, reverse
+
 from django.views.generic import TemplateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,6 +10,16 @@ class ClientDashboardView(LoginRequiredMixin, TemplateView):
     login_url = 'login'
     redirect_field_name = 'redirect_to'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_writer:
+            return super(ClientDashboardView, self).dispatch(request, *args, **kwargs)
+
+        return redirect(reverse(
+            'writer:dashboard',
+            kwargs={'writer_id': request.user.id}
+        ))
+
     def get_context_data(self, **kwargs):
-        context = {'title': 'Edenthought | Dashboard'}
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edenthought | Dashboard'
         return context
