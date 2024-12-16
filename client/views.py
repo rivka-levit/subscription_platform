@@ -11,13 +11,14 @@ class ClientDashboardView(LoginRequiredMixin, TemplateView):
     redirect_field_name = 'redirect_to'
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_writer:
-            return super(ClientDashboardView, self).dispatch(request, *args, **kwargs)
+        if request.user.is_authenticated and request.user.is_writer:
+            return redirect(reverse(
+                'writer:dashboard',
+                kwargs={'writer_id': request.user.id}
+            ))
 
-        return redirect(reverse(
-            'writer:dashboard',
-            kwargs={'writer_id': request.user.id}
-        ))
+        return super(ClientDashboardView, self).dispatch(request, *args, **kwargs)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

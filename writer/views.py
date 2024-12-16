@@ -7,30 +7,29 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from writer.forms import ArticleForm
 from writer.models import Article
 
 
-class WriterDashboardView(LoginRequiredMixin, TemplateView):
+class WriterDashboardView(TemplateView):
     template_name = 'writer/writer_dashboard.html'
-    login_url = 'login'
-    redirect_field_name = 'redirect_to'
 
+    @method_decorator(login_required(
+        login_url='login',
+        redirect_field_name='redirect_to'
+    ))
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_writer and request.user.id == self.kwargs['writer_id']:
-            return super(WriterDashboardView, self).dispatch(
-                request,
-                self.kwargs['writer_id'],
-                *args, **kwargs
-            )
         if request.user.is_writer:
             return super(WriterDashboardView, self).dispatch(
                 request,
                 request.user.id,
                 *args, **kwargs
             )
+
         return redirect('client:dashboard')
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

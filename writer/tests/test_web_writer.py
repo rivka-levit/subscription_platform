@@ -33,6 +33,18 @@ def test_writer_get_page_success(client, user_writer, path_name, expected):
     assert r.status_code == expected
 
 
+def test_writer_not_authenticated_redirect(client, user_writer):
+    """Test not authenticated redirect to login page."""
+
+    r = client.get(reverse('writer:dashboard',
+                           kwargs={'writer_id': user_writer.id}))
+
+    assert r.status_code == 302
+    assert r['Location'] == (f'{reverse('login')}?redirect_to='
+                             f'{reverse("writer:dashboard", 
+                                        kwargs={'writer_id': user_writer.id})}')
+
+
 def test_create_article_has_protected_form(client, user_writer):
     client.force_login(user_writer)
 
