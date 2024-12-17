@@ -23,6 +23,7 @@ class Subscription(models.Model):
     user = models.OneToOneField(
         get_user_model(),
         on_delete=models.CASCADE,
+        related_name='subscription',
         max_length=10,
         unique=True
     )

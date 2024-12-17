@@ -4,10 +4,11 @@ URL configuration for client app.
 
 from django.urls import path
 
-from client.views import ClientDashboardView
+from client.views import ClientDashboardView, BrowseArticlesView
 
 app_name = 'client'
 
 urlpatterns = [
     path('dashboard/', ClientDashboardView.as_view(), name='dashboard'),
+    path('browse-articles/', BrowseArticlesView.as_view(), name='browse-articles'),
 ]
