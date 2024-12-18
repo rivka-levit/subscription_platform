@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, reverse
 
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -48,4 +48,14 @@ class BrowseArticlesView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edenthought | Articles'
+        return context
+
+
+class ArticleDetailView(DetailView):
+    model = Article
+    template_name = 'client/article-detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edenthought | {self.get_object().title}'
         return context
