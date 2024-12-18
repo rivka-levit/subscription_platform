@@ -13,6 +13,10 @@
   <div class="container bg-white shadow my-2 my-md-4 p-5">
     <h1 class="text-center">{{ article.title }}</h1>
 
+    {% if article.is_premium %}
+      <h6>🪙 Premium article 🪙</h6>
+    {% endif %}
+
     <br>
     <div>
       {{ article.content }}
@@ -39,7 +43,10 @@
           🚫 Delete article
         </a>
       </div>
+
+      {% include 'writer/includes/delete_modal.html' %}
     </div>
+
   {% endif %}
 
   </div>
