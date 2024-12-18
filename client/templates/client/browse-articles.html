@@ -15,20 +15,25 @@
 
     {% for article in articles %}
 
-      <div class="container shadow bg-white my-3 my-md-4 p-4 form-layout">
+        <div class="container shadow bg-white my-3 my-md-4 p-4 form-layout">
+          <a href="#">
+            <div>
+              <h3> {{ article.title }} </h3>
 
-        <h3> {{ article.title }} </h3>
+              {% if article.is_premium %}
+                <h6>🪙 Premium article 🪙</h6>
+              {% endif %}
 
-        {% if article.is_premium %}
-          <h6>🪙 Premium article 🪙</h6>
-        {% endif %}
+              <br>
+              <p>{{ article.content|slice:"0:150" }}...</p>
 
-        <br>
-        <div class="datetime">
-          {{ article.date_posted|date:"M j, Y" }} - {{ article.date_posted|time:"H:i:s" }}
+              <br>
+              <div class="datetime">
+                {{ article.date_posted|date:"M j, Y" }} - {{ article.date_posted|time:"H:i:s" }}
+              </div>
+            </div>
+          </a>
         </div>
-
-      </div>
 
     {% endfor %}
 
