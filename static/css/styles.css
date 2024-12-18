@@ -26,3 +26,8 @@ a {
 .delete-article {
     color: #141414;
 }
+
+.empty-list {
+    font-size: 2em;
+    color: gray;
+}
