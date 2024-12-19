@@ -1,6 +1,6 @@
 """
 Tests for client web pages.
-Command: pytest client\tests\test_web_client.py --cov=client --cov-report term-missing:skip-covered
+Command: pytest client\tests --cov=client --cov-report term-missing:skip-covered
 """
 
 import pytest

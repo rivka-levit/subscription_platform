@@ -3,6 +3,7 @@ import pytest
 from account.models import CustomUser
 
 from writer.models import Article
+from client.models import Subscription
 
 
 @pytest.fixture
@@ -73,3 +74,24 @@ def article():
         return Article.objects.create(**payload)
 
     return _article_factory
+
+
+@pytest.fixture
+def subscription():
+    """Fixture to create a sample subscription and pass other parameters."""
+
+    data = {
+        'subscriber_name': 'Sample Subscriber Name',
+        'subscription_plan': 'STANDARD',
+        'subscription_cost': 9.90,
+        'paypal_subscription_id': 'sdf48ds0fbv3',
+        'is_active': True,
+    }
+
+    def _subscription_factory(user, **kwargs):
+        if kwargs:
+            data.update(kwargs)
+
+        return Subscription.objects.create(user=user, **data)
+
+    return _subscription_factory
