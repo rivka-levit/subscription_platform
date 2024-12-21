@@ -6,6 +6,7 @@ Command: pytest client\tests --cov=client --cov-report term-missing:skip-covered
 import pytest
 
 from django.shortcuts import reverse
+from django.utils.text import slugify
 
 pytestmark = pytest.mark.django_db
 
@@ -80,3 +81,19 @@ def test_browse_articles_with_subscription(
     assert r.status_code == 200
     assert 'articles' in r.context
     assert len(r.context['articles']) == expected_count
+
+
+def test_article_detail_get_success(client, sample_user, user_writer, article):
+
+    payload = {'title': 'Sample Article'}
+    a = article(user_writer, **payload)
+
+    client.force_login(sample_user)
+    r = client.get(reverse('client:article-detail', kwargs={'slug': a.slug}))
+
+    page_content = r.content.decode('utf-8')
+
+    assert r.status_code == 200
+    assert payload['title'] in r.context['title']
+    assert payload['title'] in page_content
+    assert a.content in page_content

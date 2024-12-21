@@ -51,7 +51,10 @@ class BrowseArticlesView(LoginRequiredMixin, ListView):
         return context
 
 
-class ArticleDetailView(DetailView):
+class ArticleDetailView(LoginRequiredMixin, DetailView):
+    login_url = 'login'
+    redirect_field_name = 'redirect_to'
+
     model = Article
     template_name = 'client/article-detail.html'
 
