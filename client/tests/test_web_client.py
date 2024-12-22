@@ -97,3 +97,33 @@ def test_article_detail_get_success(client, sample_user, user_writer, article):
     assert payload['title'] in r.context['title']
     assert payload['title'] in page_content
     assert a.content in page_content
+
+
+@pytest.mark.parametrize(
+    'sub_plan,output_expected',
+    [('STANDARD', 'STANDARD'), ('PREMIUM', 'PREMIUM')]
+)
+def test_sub_plan_output_on_client_dashboard(
+        sub_plan, output_expected, client, sample_user, subscription
+):
+    """Test subscription plan output on client dashboard successfully."""
+
+    subscription(user=sample_user, subscription_plan=sub_plan)
+    client.force_login(sample_user)
+    r = client.get(reverse('client:dashboard'))
+
+    assert r.status_code == 200
+    assert 'sub_plan' in r.context
+    assert r.context['sub_plan'] == output_expected
+
+
+def test_none_sub_plan_output_none(client, sample_user):
+    """Test client dashboard without subscription None subscription plan."""
+
+    client.force_login(sample_user)
+    r = client.get(reverse('client:dashboard'))
+    body = r.content.decode('utf-8')
+
+    assert r.status_code == 200
+    assert 'sub_plan' not in r.context
+    assert '<h5>Subscription status:</h5>\n    \n      <p>None</p>' in body
