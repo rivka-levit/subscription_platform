@@ -5,6 +5,7 @@ from django.views.generic import TemplateView, ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from writer.models import Article
+from client.models import Subscription
 
 
 class ClientDashboardView(LoginRequiredMixin, TemplateView):
@@ -24,7 +25,17 @@ class ClientDashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        subscriptions = Subscription.objects.filter(
+            user=self.request.user,
+            is_active=True
+        ).order_by('-id')
+
+        if subscriptions.exists():
+            context['sub_plan'] = subscriptions[0].subscription_plan
+
         context['title'] = 'Edenthought | Dashboard'
+
         return context
 
 
