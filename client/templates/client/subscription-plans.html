@@ -22,6 +22,10 @@
         <strong>(Limited article access)</strong>
         <hr>
         <br>
+        <h2 class="text-center">$4.99</h2>
+        <br>
+        <hr>
+        <br>
 
         <!-- PayPal buttons -->
         <div id="paypal-button-container-P-7YA69173GP7865408M5UYHEQ"></div>
@@ -34,9 +38,13 @@
         <strong>(Full article access)</strong>
         <hr>
         <br>
+        <h2 class="text-center">$9.99</h2>
+        <br>
+        <hr>
+        <br>
 
         <!-- PayPal buttons -->
-        <div id="paypal-button-container-P-7YA69173GP7865408M5UYHEQ"></div>
+        <div id="paypal-button-container-P-6JS1535015229103EM5UYYFA"></div>
       </div>
 
     </div>
@@ -63,6 +71,26 @@
           alert(data.subscriptionID); // You can add optional success message for the subscriber here
         }
     }).render('#paypal-button-container-P-7YA69173GP7865408M5UYHEQ'); // Renders the PayPal button
+  </script>
+
+  <script>
+    paypal.Buttons({
+        style: {
+            shape: 'pill',
+            color: 'gold',
+            layout: 'vertical',
+            label: 'subscribe'
+        },
+        createSubscription: function(data, actions) {
+          return actions.subscription.create({
+            /* Creates the subscription */
+            plan_id: 'P-6JS1535015229103EM5UYYFA'
+          });
+        },
+        onApprove: function(data, actions) {
+          alert(data.subscriptionID); // You can add optional success message for the subscriber here
+        }
+    }).render('#paypal-button-container-P-6JS1535015229103EM5UYYFA'); // Renders the PayPal button
   </script>
 
 {% endblock %}
