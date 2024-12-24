@@ -14,9 +14,13 @@
   <div class="container bg-white shadow mt-2 mt-md-4 p-5 form-layout text-center">
     <h5>Subscription status:</h5>
     {% if sub_plan %}
-      <p>{{ sub_plan }}</p>
+      <p class="pt-3">{{ sub_plan }}</p>
     {% else %}
-      <p>None</p>
+      <p class="py-3">None</p>
+      <a href="{% url 'client:subscription-plans' %}"
+         class="btn btn-success">
+        Subscribe
+      </a>
     {% endif %}
   </div>
 
