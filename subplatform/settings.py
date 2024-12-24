@@ -142,3 +142,5 @@ MESSAGE_TAGS = {
     message_constants.DEBUG: '',
     message_constants.ERROR: 'danger',
 }
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
