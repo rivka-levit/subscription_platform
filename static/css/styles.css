@@ -31,3 +31,12 @@ a {
     font-size: 1.5em;
     color: gray;
 }
+
+.plan-title:after, .plan-descr:after, .plan-price:after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin: 20px auto 10px;
+    background-color: lightgray;
+}
