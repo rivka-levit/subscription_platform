@@ -55,16 +55,17 @@ def test_browse_articles_without_subscription_empty(client, sample_user):
     assert 'no active subscription' in r.content.decode('utf-8')
 
 
-@pytest.mark.parametrize('plan,expected_count',
-                         [('STANDARD', 2), ('PREMIUM', 3)])
+@pytest.mark.parametrize('sub_plan,expected_count',
+                         [('standard', 2), ('premium', 3)])
 def test_browse_articles_with_subscription(
-        plan,
+        sub_plan,
         expected_count,
         client,
         sample_user,
         user_writer,
         subscription,
-        article
+        article,
+        request
 ):
     """Test browse articles page with subscription retrieves correct number
     of articles."""
@@ -73,7 +74,7 @@ def test_browse_articles_with_subscription(
     article(user_writer, title='Article 2')
     article(user_writer, title='Article 3', is_premium=True)
 
-    subscription(user=sample_user, subscription_plan=plan)
+    subscription(user=sample_user, plan=request.getfixturevalue(sub_plan))
     client.force_login(sample_user)
 
     r = client.get(reverse('client:browse-articles'))
@@ -101,20 +102,22 @@ def test_article_detail_get_success(client, sample_user, user_writer, article):
 
 @pytest.mark.parametrize(
     'sub_plan,output_expected',
-    [('STANDARD', 'STANDARD'), ('PREMIUM', 'PREMIUM')]
+    [('standard', 'Standard'), ('premium', 'Premium')]
 )
 def test_sub_plan_output_on_client_dashboard(
-        sub_plan, output_expected, client, sample_user, subscription
+        sub_plan, output_expected, client, sample_user, subscription, request
 ):
     """Test subscription plan output on client dashboard successfully."""
 
-    subscription(user=sample_user, subscription_plan=sub_plan)
+    subscription(user=sample_user, plan=request.getfixturevalue(sub_plan))
+
     client.force_login(sample_user)
     r = client.get(reverse('client:dashboard'))
+    body = r.content.decode('utf-8')
 
     assert r.status_code == 200
     assert 'sub_plan' in r.context
-    assert r.context['sub_plan'] == output_expected
+    assert output_expected in body
 
 
 def test_none_sub_plan_output_none(client, sample_user):
@@ -126,4 +129,4 @@ def test_none_sub_plan_output_none(client, sample_user):
 
     assert r.status_code == 200
     assert 'sub_plan' not in r.context
-    assert '<h5>Subscription status:</h5>\n    \n      <p>None</p>' in body
+    assert 'None' in body

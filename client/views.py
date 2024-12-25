@@ -4,12 +4,10 @@ from django.shortcuts import redirect, reverse
 from django.views.generic import (TemplateView,
                                   ListView,
                                   DetailView,
-                                  CreateView,
                                   RedirectView)
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 
 from writer.models import Article
 from client.models import Subscription
@@ -59,7 +57,7 @@ class BrowseArticlesView(LoginRequiredMixin, ListView):
         user = self.request.user
         if not hasattr(user, 'subscription') or not user.subscription:  # noqa
             return None
-        if user.subscription.subscription_plan == 'STANDARD':  # noqa
+        if user.subscription.subscription_plan.name == 'standard':  # noqa
             return self.queryset.filter(is_premium=False)
         return self.queryset
 
