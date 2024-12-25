@@ -62,7 +62,7 @@
           });
         },
         onApprove: function(data, actions) {
-            let currentUrl = '/client/create-subscription/?subID=' + data.subscriptionID + '&plan=STANDARD'
+            let currentUrl = '/client/create-subscription/?subID=' + data.subscriptionID + '&plan=standard'
             window.open(currentUrl, '_self')
         }
     }).render('#paypal-button-container-P-7YA69173GP7865408M5UYHEQ'); // Renders the PayPal button
@@ -83,7 +83,7 @@
           });
         },
         onApprove: function(data, actions) {
-            let currentUrl = '/client/create-subscription/?subID=' + data.subscriptionID + '&plan=PREMIUM'
+            let currentUrl = '/client/create-subscription/?subID=' + data.subscriptionID + '&plan=premium'
             window.open(currentUrl, '_self')
         }
     }).render('#paypal-button-container-P-6JS1535015229103EM5UYYFA'); // Renders the PayPal button

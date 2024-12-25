@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse, get_object_or_404
 
 from django.views.generic import (TemplateView,
                                   ListView,
@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from writer.models import Article
-from client.models import Subscription
+from client.models import Subscription, SubscriptionPlan
 
 
 class ClientDashboardView(LoginRequiredMixin, TemplateView):
@@ -101,15 +101,14 @@ class CreateSubscriptionView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         user = self.request.user
         sub_id = self.request.GET.get('subID')
-        plan = self.request.GET.get('plan')
-        price = 4.99 if plan == 'STANDARD' else 9.99
+        plan_name = self.request.GET.get('plan')
+        plan = get_object_or_404(SubscriptionPlan, name=plan_name)
 
         try:
             Subscription.objects.create(
                 user=user,
                 subscriber_name=user.full_name(),  # noqa
                 subscription_plan=plan,
-                subscription_cost=price,
                 paypal_subscription_id=sub_id,
                 is_active=True
             )
