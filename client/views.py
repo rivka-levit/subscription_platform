@@ -19,7 +19,7 @@ class ClientDashboardView(LoginRequiredMixin, TemplateView):
     redirect_field_name = 'redirect_to'
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.is_writer:
+        if request.user.is_authenticated and request.user.is_writer:  # noqa
             return redirect(reverse(
                 'writer:dashboard',
                 kwargs={'writer_id': request.user.id}

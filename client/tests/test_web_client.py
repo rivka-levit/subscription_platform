@@ -130,3 +130,19 @@ def test_none_sub_plan_output_none(client, sample_user):
     assert r.status_code == 200
     assert 'sub_plan' not in r.context
     assert 'None' in body
+
+
+def test_sub_plans_page_renders_correct_template(client, sample_user):
+    """Test subscription plan page renders correct template with
+    the information about subscription plans."""
+
+    client.force_login(sample_user)
+    r = client.get(reverse('client:subscription-plans'))
+    page_content = r.content.decode('utf-8')
+
+    assert r.status_code == 200
+    assert 'Standard subscription' in page_content
+    assert 'Premium subscription' in page_content
+    assert 'id="paypal-button-container-P-7YA69173GP7865408M5UYHEQ"' in page_content
+    assert 'id="paypal-button-container-P-6JS1535015229103EM5UYYFA"' in page_content
+
