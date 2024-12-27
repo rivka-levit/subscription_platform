@@ -8,6 +8,9 @@ from django.views.generic import (TemplateView,
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+
+from django.utils.decorators import method_decorator
 
 from writer.models import Article
 from client.models import Subscription, SubscriptionPlan
@@ -123,3 +126,25 @@ class CreateSubscriptionView(LoginRequiredMixin, RedirectView):
             messages.error(self.request, f'Something went wrong!\n{e}')
 
         return super().get_redirect_url(*args, **kwargs)
+
+
+class DeleteSubscriptionView(TemplateView):
+    template_name = 'client/delete-subscription.html'
+
+    @method_decorator(login_required(
+        login_url='login',
+        redirect_field_name='redirect_to'
+    ))
+    def dispatch(self, request, *args, **kwargs):
+        sub_id = self.kwargs.get('subID')
+        return super(DeleteSubscriptionView, self).dispatch(
+            request,
+            sub_id,
+            *args,
+            **kwargs
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edenthought | Delete Subscription'
+        return context

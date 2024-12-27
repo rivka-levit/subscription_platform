@@ -146,3 +146,22 @@ def test_sub_plans_page_renders_correct_template(client, sample_user):
     assert 'id="paypal-button-container-P-7YA69173GP7865408M5UYHEQ"' in page_content
     assert 'id="paypal-button-container-P-6JS1535015229103EM5UYYFA"' in page_content
 
+
+def test_delete_subscription_view_renders_correct_template(
+        client,
+        sample_user,
+        subscription,
+        standard
+):
+    """Test delete subscription view renders correct template."""
+
+    sbn = subscription(user=sample_user, plan=standard)
+    client.force_login(sample_user)
+
+    r = client.get(reverse(
+        'client:delete-subscription',
+        kwargs={'subID': sbn.paypal_subscription_id})
+    )
+
+    assert r.status_code == 200
+    assert 'Delete Subscription' in r.context['title']
