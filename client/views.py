@@ -15,6 +15,7 @@ from django.utils.decorators import method_decorator
 from writer.models import Article
 from client.models import Subscription, SubscriptionPlan
 from client.paypal import get_access_token, cancel_subscription_papal
+from client.exceptions import SubscriptionNotDeletedException
 
 
 class ClientDashboardView(LoginRequiredMixin, TemplateView):
@@ -139,18 +140,6 @@ class DeleteSubscriptionView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         sub_id = self.kwargs.get('subID')
 
-        # Delete subscription from PayPal
-        access_token = get_access_token()
-        cancel_subscription_papal(access_token, sub_id)
-
-        # Delete subscription from Django (application side)
-        subscription = get_object_or_404(
-            Subscription,
-            user=request.user,
-            paypal_subscription_id=sub_id
-        )
-        subscription.delete()
-
         return super(DeleteSubscriptionView, self).dispatch(
             request,
             sub_id,
@@ -161,4 +150,25 @@ class DeleteSubscriptionView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edenthought | Delete Subscription'
+
+        sub_id = self.kwargs.get('subID')
+
+        # Delete subscription from PayPal
+        access_token = get_access_token()
+
+        try:
+            cancel_subscription_papal(access_token, sub_id)
+        except SubscriptionNotDeletedException:
+            context['status'] = False
+
+        else:
+            # Delete subscription from Django (application side)
+            subscription = get_object_or_404(
+                Subscription,
+                user=self.request.user,
+                paypal_subscription_id=sub_id
+            )
+            subscription.delete()
+            context['status'] = True
+
         return context

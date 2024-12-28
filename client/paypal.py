@@ -4,7 +4,7 @@ import os
 
 from dotenv import load_dotenv
 
-from client.models import Subscription
+from client.exceptions import SubscriptionNotDeletedException
 
 load_dotenv()
 
@@ -44,4 +44,5 @@ def cancel_subscription_papal(access_token, sub_id):
 
     r = requests.post(url, headers=headers)
 
-    print(r.status_code)
+    if r.status_code != 204:
+        raise SubscriptionNotDeletedException()
