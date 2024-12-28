@@ -33,7 +33,7 @@ def get_access_token():
     return access_token
 
 
-def cancel_subscription(access_token, sub_id):
+def cancel_subscription_papal(access_token, sub_id):
     headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + access_token,
