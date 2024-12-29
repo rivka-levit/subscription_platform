@@ -159,7 +159,7 @@ class DeleteSubscriptionView(TemplateView):
         try:
             cancel_subscription_papal(access_token, sub_id)
         except SubscriptionNotDeletedException:
-            context['status'] = False
+            context['is_deleted'] = False
 
         else:
             # Delete subscription from Django (application side)
@@ -169,6 +169,6 @@ class DeleteSubscriptionView(TemplateView):
                 paypal_subscription_id=sub_id
             )
             subscription.delete()
-            context['status'] = True
+            context['is_deleted'] = True
 
         return context

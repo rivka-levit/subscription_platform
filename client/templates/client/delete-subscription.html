@@ -7,6 +7,10 @@
 
 {% block content %}
 
-  <div class="text-center p-5">Subscription has been deleted successfully!</div>
+  {% if is_deleted %}
+    <div class="text-center p-5">Subscription has been deleted successfully!</div>
+  {% else %}
+    <div class="text-center p-5">Something went wrong! Please, contact to our support service.</div>
+  {% endif %}
 
 {% endblock %}
