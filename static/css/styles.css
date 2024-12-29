@@ -6,6 +6,10 @@ a {
     text-decoration: none;
 }
 
+.content {
+    min-height: 70vh;
+}
+
 .form-layout {
     max-width: 500px;
     -webkit-border-radius: 20px;
@@ -43,4 +47,13 @@ a {
 
 .bnt-form {
     display: inline;
+}
+
+footer:before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin: 20px auto;
+    background-color: lightgray;
 }
