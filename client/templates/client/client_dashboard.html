@@ -17,10 +17,11 @@
       <p class="pt-3">{{ sub_plan.name|title }}</p>
     {% else %}
       <p class="py-3">None</p>
-      <a href="{% url 'client:subscription-plans' %}"
-         class="btn btn-success">
-        Subscribe
-      </a>
+      <form action="{% url 'client:subscription-plans' %}" method="get">
+        <input type="submit"
+               value="Subscribe"
+               class="btn btn-success">
+      </form>
     {% endif %}
   </div>
 

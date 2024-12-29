@@ -40,3 +40,7 @@ a {
     margin: 20px auto 10px;
     background-color: lightgray;
 }
+
+.bnt-form {
+    display: inline;
+}
