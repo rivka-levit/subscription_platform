@@ -14,7 +14,10 @@
   <div class="container bg-white shadow mt-2 mt-md-4 p-5 form-layout text-center">
     <h5>Subscription status:</h5>
     {% if sub_plan %}
-      <p class="pt-3">{{ sub_plan.name|title }}</p>
+      <p class="pt-3 fw-bold">
+        {{ sub_plan.name|title }}
+        <a href="{% url 'account' %}#subEdit" class="fw-light">(edit)</a>
+      </p>
     {% else %}
       <p class="py-3">None</p>
       <form action="{% url 'client:subscription-plans' %}" method="get">
