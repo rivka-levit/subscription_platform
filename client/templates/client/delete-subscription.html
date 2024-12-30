@@ -7,7 +7,7 @@
 
 {% block content %}
 
-  <div class="container form-layout bg-white shadow text-center p-5">
+  <div class="container form-layout bg-white shadow text-center p-5 my-4 my-md-5">
   {% if is_deleted %}
     <h5>Subscription cancelled!</h5>
     <br>
@@ -15,7 +15,8 @@
     <br>
     <p>
       We regret to inform you that your subscription has been cancelled as
-      per your request. Thank you for your past support!
+      per your request. <br>
+      Thank you for your past support!
     </p>
   {% else %}
     <h5>Something went wrong!</h5>
@@ -23,12 +24,12 @@
     <h1>🧐</h1>
     <br>
     <p>
-      We could not cancel your subscription properly.
-      Please, contact to our support service.
+      We could not cancel your subscription properly. <br>
+      Please, check if you have any subscription by now.
     </p>
   {% endif %}
 
-    <a class="btn btn-success" href="{% url 'client:dashboard' %}">
+    <a class="btn btn-success mt-4 mt-md-5" href="{% url 'client:dashboard' %}">
       Return to dashboard
     </a>
   </div>

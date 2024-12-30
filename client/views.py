@@ -100,7 +100,6 @@ class SubscriptionPlansView(LoginRequiredMixin, TemplateView):
 class CreateSubscriptionView(LoginRequiredMixin, RedirectView):
     login_url = 'login'
     redirect_field_name = 'redirect_to'
-    permanent = True
     pattern_name = 'client:dashboard'
 
     def get_redirect_url(self, *args, **kwargs):

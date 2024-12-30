@@ -6,7 +6,10 @@ Command: pytest client\tests --cov=client --cov-report term-missing:skip-covered
 import pytest
 
 from django.shortcuts import reverse
-from django.utils.text import slugify
+from django.db import IntegrityError
+from django.contrib.messages import get_messages
+
+from client.models import Subscription
 
 pytestmark = pytest.mark.django_db
 
@@ -145,6 +148,41 @@ def test_sub_plans_page_renders_correct_template(client, sample_user):
     assert 'Premium subscription' in page_content
     assert 'id="paypal-button-container-P-7YA69173GP7865408M5UYHEQ"' in page_content
     assert 'id="paypal-button-container-P-6JS1535015229103EM5UYYFA"' in page_content
+
+
+@pytest.mark.parametrize('sub_plan', ['standard', 'premium'])
+def test_create_subscription_success(
+        sub_plan, client, sample_user, request
+):
+    """Test creating subscription via web page successfully."""
+
+    sub_id = 'I-FF857850J03'
+    plan = request.getfixturevalue(sub_plan)
+
+    client.force_login(sample_user)
+    r = client.get('%s?subID=%s&plan=%s' % (reverse('client:create-subscription'), sub_id, plan.name))
+    sbn = Subscription.objects.filter(user=sample_user, subscription_plan=plan)
+
+    assert r.status_code == 302
+    assert r['Location'] == reverse('client:dashboard')
+    assert sbn.exists()
+    assert len(sbn) == 1
+
+
+def test_duplicated_create_subscription_fails(client, sample_user, standard, premium, subscription):
+    """Test creating duplicated subscription fails."""
+
+    subscription(user=sample_user, plan=standard)
+    sub_id = 'I-FF84TRR0J08'
+
+    client.force_login(sample_user)
+    r = client.get('%s?subID=%s&plan=%s' % (reverse('client:create-subscription'), sub_id, premium.name))
+    message_received = list(get_messages(r.wsgi_request))
+
+    assert r.status_code == 302
+    assert len(message_received) == 1
+    assert message_received[0].level == 40
+    assert 'Subscription not created!' in message_received[0].message
 
 
 def test_delete_subscription_view_renders_correct_template(
