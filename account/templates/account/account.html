@@ -43,7 +43,7 @@
   <!-- Subscription information only for clients -->
 
   {% if not user.is_writer %}
-    <div class="container shadow form-layout my-4 my-md-5 p-5 text-center" id="subEdit">
+    <div class="container shadow form-layout my-4 my-md-5 p-5 text-center" id="edit-subscription">
       <h4>Subscription Management</h4>
       <div class="py-3">
         <p class="py-1">Subscription plan:
@@ -53,8 +53,13 @@
         </p>
           <p class="py-1">Subscription status:
             {% if user.subscription %}
-              {% if user.subscription.is_active %}Active{% else %}Locked{% endif %}
-            {% else %}None
+              {% if user.subscription.is_active %}
+                <span class="text-success">Active</span>
+              {% else %}
+                <span class="text-danger">Locked</span>
+              {% endif %}
+            {% else %}
+              <span>None</span>
             {% endif %}
           </p>
       </div>
@@ -67,7 +72,6 @@
             <input type="submit"
                    value="{% if user.subscription.is_active %}Deactivate{% else %}Activate{% endif %}"
                    class="btn btn-{% if user.subscription.is_active %}warning{% else %}success{% endif %} mx-1">
-
           </form>
           <form action="#" method="get" class="bnt-form">
             <input type="button"
@@ -85,7 +89,6 @@
           </form>
         {% endif %}
       </div>
-
 
     </div>
   {% endif %}
