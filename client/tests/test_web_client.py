@@ -6,10 +6,12 @@ Command: pytest client\tests --cov=client --cov-report term-missing:skip-covered
 import pytest
 
 from django.shortcuts import reverse
-from django.db import IntegrityError
 from django.contrib.messages import get_messages
 
+from unittest.mock import patch, MagicMock
+
 from client.models import Subscription
+from client.exceptions import SubscriptionNotDeletedException
 
 pytestmark = pytest.mark.django_db
 
@@ -176,7 +178,9 @@ def test_duplicated_create_subscription_fails(client, sample_user, standard, pre
     sub_id = 'I-FF84TRR0J08'
 
     client.force_login(sample_user)
-    r = client.get('%s?subID=%s&plan=%s' % (reverse('client:create-subscription'), sub_id, premium.name))
+    r = client.get('%s?subID=%s&plan=%s' % (reverse('client:create-subscription'),
+                                            sub_id,
+                                            premium.name))
     message_received = list(get_messages(r.wsgi_request))
 
     assert r.status_code == 302
@@ -191,7 +195,8 @@ def test_delete_subscription_view_renders_correct_template(
         subscription,
         standard
 ):
-    """Test delete subscription view renders correct template."""
+    """Test delete subscription view renders correct template
+    when subscription is not deleted."""
 
     sbn = subscription(user=sample_user, plan=standard)
     client.force_login(sample_user)
@@ -203,3 +208,6 @@ def test_delete_subscription_view_renders_correct_template(
 
     assert r.status_code == 200
     assert 'Delete Subscription' in r.context['title']
+    assert 'is_deleted' in r.context
+    assert r.context['is_deleted'] is False
+    assert 'Something went wrong!' in r.content.decode('utf-8')

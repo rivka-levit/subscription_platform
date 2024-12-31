@@ -9,7 +9,9 @@ from client.exceptions import SubscriptionNotDeletedException
 load_dotenv()
 
 
-def get_access_token():
+def get_access_token() -> str:
+    """Makes request to PayPal API and returns access token."""
+
     data = {'grant_type': 'client_credentials'}
 
     headers = {
@@ -44,5 +46,7 @@ def cancel_subscription_papal(access_token, sub_id):
 
     r = requests.post(url, headers=headers)
 
-    if r.status_code != 204:
-        raise SubscriptionNotDeletedException()
+    if r.status_code == 204:
+        return True
+
+    raise SubscriptionNotDeletedException()
