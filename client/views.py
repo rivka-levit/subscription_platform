@@ -4,7 +4,8 @@ from django.shortcuts import redirect, reverse, get_object_or_404
 from django.views.generic import (TemplateView,
                                   ListView,
                                   DetailView,
-                                  RedirectView)
+                                  RedirectView,
+                                  View)
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -171,3 +172,15 @@ class DeleteSubscriptionView(TemplateView):
             context['is_deleted'] = True
 
         return context
+
+
+class UpdateSubscriptionView(LoginRequiredMixin, View):
+    login_url = 'login'
+    redirect_field_name = 'redirect_to'
+
+    def get(self, request, subID, *args, **kwargs):
+        pass
+
+    def post(self, request, subID, *args, **kwargs):
+        pass
+

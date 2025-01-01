@@ -9,7 +9,8 @@ from client.views import (ClientDashboardView,
                           ArticleDetailView,
                           SubscriptionPlansView,
                           CreateSubscriptionView,
-                          DeleteSubscriptionView)
+                          DeleteSubscriptionView,
+                          UpdateSubscriptionView)
 
 app_name = 'client'
 
@@ -35,4 +36,10 @@ urlpatterns = [
         DeleteSubscriptionView.as_view(),
         name='delete-subscription'
     ),
+
+    path(
+        'update-subscription/<str:subID>/',
+        UpdateSubscriptionView.as_view(),
+        name='update-subscription'
+    )
 ]
