@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 
 from writer.models import Article
 from client.models import Subscription, SubscriptionPlan
-from client.paypal import get_access_token, cancel_subscription_papal
+from client.paypal import get_access_token, cancel_subscription_paypal
 from client.exceptions import SubscriptionNotDeletedException
 
 
@@ -157,7 +157,7 @@ class DeleteSubscriptionView(TemplateView):
         access_token = get_access_token()
 
         try:
-            cancel_subscription_papal(access_token, sub_id)
+            cancel_subscription_paypal(access_token, sub_id)
         except SubscriptionNotDeletedException:
             context['is_deleted'] = False
 
