@@ -25,15 +25,17 @@
 
       {{ account_form|crispy }}
 
-      <input type="submit"
-             value="Update account"
-             class="btn btn-success mt-2 mt-md-4">
+      <div class="text-center mt-4">
+        <input type="submit"
+               value="Update account"
+               class="btn btn-info mt-2 mt-md-4">
 
-      <input type="button"
-             value="Delete account"
-             data-toggle="modal"
-             data-target="#deleteAccountModalCenter"
-             class="btn btn-danger mt-2 mt-md-4 mx-3">
+        <input type="button"
+               value="Delete account"
+               data-toggle="modal"
+               data-target="#deleteAccountModalCenter"
+               class="btn btn-danger mt-2 mt-md-4 mx-3">
+      </div>
 
       {% include 'account/includes/delete_acc_modal.html' %}
     </form>
