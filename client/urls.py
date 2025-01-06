@@ -10,7 +10,8 @@ from client.views import (ClientDashboardView,
                           SubscriptionPlansView,
                           CreateSubscriptionView,
                           DeleteSubscriptionView,
-                          UpdateSubscriptionView)
+                          UpdateSubscriptionView,
+                          PayPalSubConfirmedView)
 
 app_name = 'client'
 
@@ -41,5 +42,10 @@ urlpatterns = [
         'update-subscription/<str:subID>/',
         UpdateSubscriptionView.as_view(),
         name='update-subscription'
-    )
+    ),
+    path(
+        'paypal-subscription-confirmed/',
+        PayPalSubConfirmedView.as_view(),
+        name='paypal-subscription-confirmed'
+    ),
 ]
