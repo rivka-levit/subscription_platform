@@ -4,7 +4,7 @@ import os
 
 from dotenv import load_dotenv
 
-from client.models import Subscription
+from client.models import Subscription, SubscriptionPlan
 from client.exceptions import SubscriptionNotDeletedException
 
 load_dotenv()
@@ -67,10 +67,11 @@ def update_subscription_paypal(access_token, sub_id):
     current_sub_plan = subscription.subscription_plan
 
     if current_sub_plan.name == 'standard':
-        new_sub_plan_id = 'P-6JS1535015229103EM5UYYFA'  # Upgrade to Premium plan
-
+        premium_plan = SubscriptionPlan.objects.get(name='premium')
     else:
-        new_sub_plan_id = 'P-7YA69173GP7865408M5UYHEQ'  # Downgrade to Standard plan
+        premium_plan = SubscriptionPlan.objects.get(name='standard')
+
+    new_sub_plan_id = premium_plan.paypal_plan_id
 
     url = (f'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/'
            f'{sub_id}/revise')
