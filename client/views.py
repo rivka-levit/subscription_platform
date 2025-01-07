@@ -214,6 +214,10 @@ class PayPalSubConfirmedView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'PayPal Confirmed Subscription'
-        context['subID'] = self.request.user.subscription.paypal_subscription_id  # noqa
+
+        subscription = Subscription.objects.filter(user=self.request.user)
+        if subscription.exists():
+            context['subID'] = subscription[0].paypal_subscription_id
+
         return context
 
