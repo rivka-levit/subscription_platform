@@ -67,11 +67,11 @@ def update_subscription_paypal(access_token, sub_id):
     current_sub_plan = subscription.subscription_plan
 
     if current_sub_plan.name == 'standard':
-        premium_plan = SubscriptionPlan.objects.get(name='premium')
+        plan = SubscriptionPlan.objects.get(name='premium')
     else:
-        premium_plan = SubscriptionPlan.objects.get(name='standard')
+        plan = SubscriptionPlan.objects.get(name='standard')
 
-    new_sub_plan_id = premium_plan.paypal_plan_id
+    new_sub_plan_id = plan.paypal_plan_id
 
     url = (f'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/'
            f'{sub_id}/revise')
@@ -90,7 +90,7 @@ def update_subscription_paypal(access_token, sub_id):
     return approve_link
 
 
-def get_current_subscription(access_token: str, sub_id: str) -> str | None:
+def get_current_subscription_plan(access_token: str, sub_id: str) -> str | None:
     """Make request to PayPal and return current subscription plan ID."""
 
     headers = {

@@ -1,3 +1,4 @@
+from django.contrib.gis.gdal.prototypes.srs import new_ct
 from django.db import IntegrityError
 from django.shortcuts import redirect, reverse, get_object_or_404
 
@@ -19,7 +20,8 @@ from client.models import Subscription, SubscriptionPlan
 from client.exceptions import SubscriptionNotDeletedException
 from client.paypal import (get_access_token,
                            cancel_subscription_paypal,
-                           update_subscription_paypal)
+                           update_subscription_paypal,
+                           get_current_subscription_plan)
 
 
 class ClientDashboardView(LoginRequiredMixin, TemplateView):
@@ -221,3 +223,47 @@ class PayPalSubConfirmedView(LoginRequiredMixin, TemplateView):
 
         return context
 
+
+class DjangoSubConfirmedView(TemplateView):
+    @method_decorator(login_required(
+        login_url='login',
+        redirect_field_name='redirect_to'
+    ))
+    def dispatch(self, request, *args, **kwargs):
+        sub_id = self.kwargs.get('subID')
+
+        return super().dispatch(
+            request,
+            sub_id,
+            *args,
+            **kwargs
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Subscription Confirmed'
+
+        subscription = get_object_or_404(
+            Subscription,
+            user=self.request.user,
+            paypal_subscription_id=self.kwargs.get('subID')
+        )
+        access_token = get_access_token()
+        paypal_subscription_plan_id = get_current_subscription_plan(
+            access_token,
+            self.kwargs['subID']
+        )
+        current_subscription_plan_id = subscription.subscription_plan.paypal_plan_id
+
+        if paypal_subscription_plan_id != current_subscription_plan_id:
+            new_plan = get_object_or_404(
+                SubscriptionPlan,
+                paypal_plan_id=paypal_subscription_plan_id
+            )
+
+            subscription.subscription_plan = new_plan
+            subscription.save()
+
+        context['subPlan'] = subscription.subscription_plan
+
+        return context

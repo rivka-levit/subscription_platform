@@ -11,7 +11,8 @@ from client.views import (ClientDashboardView,
                           CreateSubscriptionView,
                           DeleteSubscriptionView,
                           UpdateSubscriptionView,
-                          PayPalSubConfirmedView)
+                          PayPalSubConfirmedView,
+                          DjangoSubConfirmedView)
 
 app_name = 'client'
 
@@ -43,9 +44,16 @@ urlpatterns = [
         UpdateSubscriptionView.as_view(),
         name='update-subscription'
     ),
+
     path(
         'paypal-subscription-confirmed/',
         PayPalSubConfirmedView.as_view(),
         name='paypal-subscription-confirmed'
+    ),
+
+    path(
+        'django-subscription-confirmed/<str:subID>/',
+        DjangoSubConfirmedView.as_view(),
+        name='django-subscription-confirmed'
     ),
 ]
