@@ -225,6 +225,8 @@ class PayPalSubConfirmedView(LoginRequiredMixin, TemplateView):
 
 
 class DjangoSubConfirmedView(TemplateView):
+    template_name = 'client/django-update-confirmed.html'
+
     @method_decorator(login_required(
         login_url='login',
         redirect_field_name='redirect_to'
